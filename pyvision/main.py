@@ -4,6 +4,7 @@ import multiprocessing
 import numpy as np
 from apriltag import apriltag
 from picamera2 import Picamera2
+import subprocess
 
 def video_streaming(frame_queue):
 	camera = Picamera2()
@@ -19,7 +20,7 @@ def video_streaming(frame_queue):
 		
 		cv2.imshow("Picamera Video stream", frame)
 		if cv2.waitKey(1) & 0xFF ==ord('q'):
-			break
+			breaks
 	
 	camera.stop()
 	cv2.destroyAllWindows()
@@ -41,16 +42,18 @@ def tag_detection(frame_queue):
 			if cv2.waitKey(1) & 0xFF == ord('q'):
 				break
 
+if __name__ == "__main__":
+	result = subprocess.run(["libcamera-hello"])
+	
+	frame_queue = multiprocessing.Queue(maxsize=10)
+	streaming = multiprocessing.Process(target=video_streaming, args=(frame_queue, ))
+	detection = multiprocessing.Process(target=tag_detection, args=(frame_queue, ))
 
-frame_queue = multiprocessing.Queue(maxsize=10)
-streaming = multiprocessing.Process(target=video_streaming, args=(frame_queue, ))
-detection = multiprocessing.Process(target=tag_detection, args=(frame_queue, ))
+	streaming.start()
+	detection.start()
 
-streaming.start()
-detection.start()
-
-streaming.join()
-detection.join()
+	streaming.join()
+	detection.join()
 	
 	
 	
