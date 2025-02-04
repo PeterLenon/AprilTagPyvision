@@ -1,0 +1,6 @@
+opencv-python
+loguru
+apriltag
+picamera2
+numpy
+multiprocessing
