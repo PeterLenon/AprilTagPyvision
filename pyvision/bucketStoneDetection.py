@@ -4,7 +4,12 @@ import numpy as np
 # from picamera2 import Picamera2
 from PIL import Image
 from PIL.ExifTags import TAGS
-import json
+from enum import Enum
+
+class Unit(Enum):
+    NO_UNIT = 1
+    INCH = 2
+    CM = 3
 
 def _detect_bucket(frame):
      # returns dict of buckets as tuples
@@ -65,8 +70,7 @@ def _get_exif_data(frame):
         logger.error(f"Error reading EXIF data: {e}")
         return None
 
-def _get_focal_length(frame):
-    exif_info = _get_exif_data(frame)
+def _get_focal_length(exif_info):
     if exif_info and 'FocalLength' in exif_info:
         focal_length = exif_info['FocalLength']
         logger.info(f"Focal Length: {focal_length} mm")
@@ -74,6 +78,17 @@ def _get_focal_length(frame):
     else:
         logger.info("Focal length not found in EXIF data.")
         return None
+
+def _get_photo_pixel_factor(exif_info):
+     resolution_unit = exif_info["ResolutionUnit"]
+     pixel_factor = exif_info["XResolution"]
+     if resolution_unit == Unit.NO_UNIT:
+        logger.warning("resolution unit is not specified")
+     elif resolution_unit == Unit.INCH:
+        pixel_factor = 25.4 / pixel_factor
+     elif resolution_unit == Unit.CM:
+         pixel_factor = 10 / pixel_factor
+     return pixel_factor
 
 def getPos(frame):
      # returns dict{ 
@@ -85,9 +100,12 @@ def getPos(frame):
      #                             ...
      #                             ]
      #              }
-     real_life_bucket_size = 6
-     real_life_stone_size = 2
-     focal_length = _get_focal_length(frame)
+     inch_to_mm = 25.4
+     real_life_bucket_size = 6 * inch_to_mm
+     real_life_stone_size = 2 * inch_to_mm
+     exif_info = _get_exif_data(frame=frame)
+     pixel_factor = _get_photo_pixel_factor(exif_info=exif_info)
+     focal_length = _get_focal_length(exif_info=exif_info)
      frame_height = frame.shape[0]
      frame_width = frame.shape[1]
 
@@ -100,8 +118,8 @@ def getPos(frame):
           for bucket in buckets.values():
                x , y, w, h = bucket
                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-               depth_x = (focal_length * real_life_bucket_size) / w 
-               depth_y = (focal_length * real_life_bucket_size) / h
+               depth_x = (focal_length * real_life_bucket_size) / (w * pixel_factor) 
+               depth_y = (focal_length * real_life_bucket_size) / (h * pixel_factor)
                true_y_depth = sum(depth_x, depth_y)/2
 
                img_to_real_factor = true_y_depth / (frame_height - (y+h))
@@ -114,7 +132,7 @@ def getPos(frame):
          for stone in stones.values():
              center_x , center_y , radius = stone
              cv2.circle(frame, center=(center_x, center_y), radius=radius, color=(0, 0, 255) , thickness=2)
-             true_y_depth = (focal_length * real_life_stone_size) / radius
+             true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
 
              img_to_real_factor = true_y_depth / (frame_height - (center_y + radius))
              stone_depth_from_center = center_x - (frame_width/2)

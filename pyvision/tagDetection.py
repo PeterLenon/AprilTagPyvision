@@ -4,6 +4,7 @@ import multiprocessing
 import numpy as np
 from apriltag import apriltag
 from picamera2 import Picamera2
+from bucketStoneDetection import getPos
 
 def tag_detection(frame_queue):
 	detector = apriltag("tag36h11")
@@ -18,6 +19,11 @@ def tag_detection(frame_queue):
 				pay_load = detection.id
 				logger.info(f"Detected apriltag information: {pay_load}")
 			
-			cv2.imshow("Apriltag detection", gray)
-			if cv2.waitKey(1) & 0xFF == ord('q'):
-				break
+			buckets_and_stones = getPos(frame=frame)
+			for bucket in buckets_and_stones["buckets"]:
+				x, y = bucket
+				logger.info(f"Bucket x_depth --> {x} mm, Bucket y_depth --> {y} mm")
+			
+			for stone in buckets_and_stones["stones"]:
+				x, y = stone
+				logger.info(f"Stone x_depth --> {x} mm, Stone y_depth --> {y} mm")
