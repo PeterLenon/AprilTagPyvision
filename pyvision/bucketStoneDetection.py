@@ -48,9 +48,9 @@ def _detect_stones(frame):
      for contour in contours:
          epsilon = 0.01 * cv2.arcLength(contour, True)
          approx = cv2.approxPolyDP(contour, epsilon, True)
-         logger.info(f"stone contours size {len(approx)}")
          if len(approx) < 6:
              continue
+         logger.info(f"stone contours size {len(approx)}")
          (center_x, center_y) , radius = cv2.minEnclosingCircle(contour)
          center_x = int(center_x)
          center_y = int(center_y)
