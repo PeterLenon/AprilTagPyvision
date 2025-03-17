@@ -30,7 +30,7 @@ def _detect_bucket(frame):
          epsilon = 0.02 * cv2.arcLength(contour, True)
          approx = cv2.approxPolyDP(contour, epsilon, True)
          if len(approx) >= 4 and len(approx) <= 6:
-             potential_buckets[f'bucket{len(potential_buckets.keys)}'] = (x, y, w, h)
+             potential_buckets[f'bucket{len(potential_buckets.keys())}'] = (x, y, w, h)
      return potential_buckets
 
 def _detect_stones(frame):
