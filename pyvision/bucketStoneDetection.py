@@ -50,12 +50,12 @@ def _detect_stones(frame):
          approx = cv2.approxPolyDP(contour, epsilon, True)
          if len(approx) < 6:
              continue
-         logger.info(f"stone contours size {len(approx)}")
          (center_x, center_y) , radius = cv2.minEnclosingCircle(contour)
          center_x = int(center_x)
          center_y = int(center_y)
          radius = int(radius)
          potential_stones[f"stone{len(potential_stones.keys())}"] = (center_x, center_y, radius)
+     return potential_stones
 
 def _get_exif_data(frame):
     try:
