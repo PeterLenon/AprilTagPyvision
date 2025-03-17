@@ -73,7 +73,7 @@ def _get_exif_data(frame):
         return None
 
 def _get_focal_length(exif_info):
-     default = 3.63
+    default = 3.63
     if exif_info and 'FocalLength' in exif_info:
         focal_length = exif_info['FocalLength']
         logger.info(f"Focal Length: {focal_length} mm")
