@@ -69,7 +69,6 @@ def _get_exif_data(frame):
             exif_info[tag] = value
         return exif_info 
     except Exception as e:
-        logger.error(f"Error reading EXIF data: {e}")
         return None
 
 def _get_focal_length(exif_info):
@@ -79,7 +78,6 @@ def _get_focal_length(exif_info):
         logger.info(f"Focal Length: {focal_length} mm")
         return focal_length
     else:
-        logger.info(f"Focal length not found in EXIF data. Rollback to default {default}")
         return default
 
 def _get_photo_pixel_factor(exif_info):
@@ -146,5 +144,5 @@ def getPos(frame):
              stone_depth_from_center = center_x - (frame_width/2)
              true_x_depth = stone_depth_from_center * img_to_real_factor
              objects[f"stones"].append((true_x_depth, true_y_depth))
-                 
+
      return objects

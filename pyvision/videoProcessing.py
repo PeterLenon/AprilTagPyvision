@@ -8,6 +8,8 @@ from bucketStoneDetection import getPos
 
 def video_processing(frame_queue):
 	apriltagDetector = apriltag("tag36h11")
+	logged_bucket_false = False
+	logged_stones_false = False
 	while True:
 		if not frame_queue.empty():
 			frame = frame_queue.get()
@@ -21,15 +23,22 @@ def video_processing(frame_queue):
 				for bucket in buckets_and_stones["buckets"]:
 					x, y = bucket
 					logger.info(f"Bucket x_depth --> {x} mm, Bucket y_depth --> {y} mm")
+					logged_bucket_false = False
 			else:
-				logger.info("No buckets detected!")
+				if not logged_bucket_false:
+					logger.info("No buckets detected!")
+					logged_bucket_false = True
+
 			
 			if "stones" in buckets_and_stones.keys():
 				for stone in buckets_and_stones["stones"]:
 					x, y = stone
 					logger.info(f"Stone x_depth --> {x} mm, Stone y_depth --> {y} mm")
+					logged_stones_false = False
 			else:
-				logger.info("No stones detected!")
+				if not logged_stones_false:
+					logger.info("No stones detected!")
+					logged_stones_false = True
 				
 
 def _tag_detection(frame, detector):
