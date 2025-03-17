@@ -115,7 +115,6 @@ def getPos(frame):
      frame_height = frame.shape[0]
      frame_width = frame.shape[1]
 
-     frame =cv2.imread(frame)
      buckets = _detect_bucket(frame=frame)
      stones = _detect_stones(frame=frame)
      objects = dict()
