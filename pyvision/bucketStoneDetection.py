@@ -73,18 +73,17 @@ def _get_exif_data(frame):
         return None
 
 def _get_focal_length(exif_info):
-    default = 3.63
     if exif_info and 'FocalLength' in exif_info:
         focal_length = exif_info['FocalLength']
         logger.info(f"Focal Length: {focal_length} mm")
         return focal_length
     else:
-        logger.info(f"Focal length not found in EXIF data. Rollback to default {default}")
-        return default
+        logger.info("Focal length not found in EXIF data.")
+        return None
 
 def _get_photo_pixel_factor(exif_info):
-     if(exif_info is None):
-         return 25.4/640
+     if not exif_info:
+          return 25.4/640
      resolution_unit = exif_info["ResolutionUnit"]
      pixel_factor = exif_info["XResolution"]
      if resolution_unit == Unit.NO_UNIT:
