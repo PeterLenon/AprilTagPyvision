@@ -126,7 +126,7 @@ def getPos(frame):
                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                depth_x = (focal_length * real_life_bucket_size) / (w * pixel_factor) 
                depth_y = (focal_length * real_life_bucket_size) / (h * pixel_factor)
-               true_y_depth = sum(depth_x, depth_y)/2
+               true_y_depth = (depth_x + depth_y)/2
                img_to_real_factor = true_y_depth / (frame_height - (y+h))
 
                bucket_x_center = x + (w/2)
