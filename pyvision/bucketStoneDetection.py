@@ -118,18 +118,6 @@ def getPos(frame):
      buckets = _detect_bucket(frame=frame)
      stones = _detect_stones(frame=frame)
      objects = dict()
-
-    #  if stones:
-    #      objects['stones'] = []
-    #      for stone in stones.values():
-    #          center_x , center_y , radius = stone
-    #          cv2.circle(frame, center=(center_x, center_y), radius=radius, color=(0, 0, 255) , thickness=2)
-    #          true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
-
-    #          img_to_real_factor = true_y_depth / (frame_height - center_y - radius)
-    #          stone_depth_from_center = center_x - (frame_width/2)
-    #          true_x_depth = stone_depth_from_center * img_to_real_factor
-    #          objects[f"stones"].append((true_x_depth, true_y_depth))
      
      if buckets:
           objects['buckets'] = []
@@ -138,14 +126,25 @@ def getPos(frame):
                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                depth_x = (focal_length * real_life_bucket_size) / (w * pixel_factor) 
                depth_y = (focal_length * real_life_bucket_size) / (h * pixel_factor)
-               logger.info(f"depth_x --> {depth_x}      depth_y --> {depth_y}")
                true_y_depth = (depth_x + depth_y)/2
-               logger.info(f"true_y_depth --> {true_y_depth}")
-               img_to_real_factor = true_y_depth / (frame_height - (y+h))
+               
+               if frame_height - (y+h) >0:
+                img_to_real_factor = true_y_depth / (frame_height - (y+h))
 
-               bucket_x_center = x + (w/2)
-               bucket_center_from_camera_view = bucket_x_center - (frame_width/2)
-               true_x_depth = bucket_center_from_camera_view * img_to_real_factor
-               objects[f"buckets"].append((true_x_depth, true_y_depth))   
+                bucket_x_center = x + (w/2)
+                bucket_center_from_camera_view = bucket_x_center - (frame_width/2)
+                true_x_depth = bucket_center_from_camera_view * img_to_real_factor
+                objects[f"buckets"].append((true_x_depth, true_y_depth))   
+     if stones:
+         objects['stones'] = []
+         for stone in stones.values():
+             center_x , center_y , radius = stone
+             cv2.circle(frame, center=(center_x, center_y), radius=radius, color=(0, 0, 255) , thickness=2)
+             true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
 
+             img_to_real_factor = true_y_depth / (frame_height - center_y - radius)
+             stone_depth_from_center = center_x - (frame_width/2)
+             true_x_depth = stone_depth_from_center * img_to_real_factor
+             objects[f"stones"].append((true_x_depth, true_y_depth))
+                 
      return objects
