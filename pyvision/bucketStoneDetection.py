@@ -127,7 +127,7 @@ def getPos(frame):
                depth_y = (focal_length * real_life_bucket_size) / (h * pixel_factor)
                true_y_depth = (depth_x + depth_y)/2
                
-               if frame_height - (y+h) >0:
+               if frame_height - (y+h) >0 and true_y_depth <= 1000 :
                 img_to_real_factor = true_y_depth / (frame_height - (y+h))
 
                 bucket_x_center = x + (w/2)
@@ -141,7 +141,7 @@ def getPos(frame):
              cv2.circle(frame, center=(center_x, center_y), radius=radius, color=(0, 0, 255) , thickness=2)
              true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
 
-             if frame_height - center_y - radius != 0:   
+             if frame_height - center_y - radius != 0 and true_y_depth <= 400:   
                 img_to_real_factor = true_y_depth / (frame_height - center_y - radius)
                 stone_depth_from_center = center_x - (frame_width/2)
                 true_x_depth = stone_depth_from_center * img_to_real_factor
