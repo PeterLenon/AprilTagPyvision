@@ -140,7 +140,7 @@ def getPos(frame):
          for stone in stones.values():
              center_x , center_y , radius = stone
              cv2.circle(frame, (int(center_x), int(center_y)), int(radius), (0, 0, 255), 2)
-             cv2.imshow(frame)
+             cv2.imshow("detected stones", frame)
              cv2.waitKey(1)
              true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
 
