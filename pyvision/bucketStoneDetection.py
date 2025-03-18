@@ -22,7 +22,7 @@ def _detect_bucket(frame):
      blurred = cv2.GaussianBlur(gray, (5, 5), 0)
      edges = cv2.Canny(blurred, 50, 150)
      contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-     MIN_SIZE = 100
+     MIN_SIZE = 300
      potential_buckets = dict()
      for contour in contours:
          x, y, w, h = cv2.boundingRect(contour)
@@ -58,44 +58,6 @@ def _detect_stones(frame):
          potential_stones[f"stone{len(potential_stones.keys())}"] = (center_x, center_y, radius)
      return potential_stones
 
-def _get_exif_data(frame):
-    try:
-        image = Image.open(frame)
-        exif_data = image._getexif()
-        if exif_data is None:
-            logger.info("No EXIF data found in the image.")
-            return None
-        exif_info = {}
-        for tag_id, value in exif_data.items():
-            tag = TAGS.get(tag_id, tag_id)
-            exif_info[tag] = value
-        return exif_info 
-    except Exception as e:
-        return None
-
-def _get_focal_length(exif_info):
-    default = 3.6
-    defaultUnit = Unit.MM
-    if exif_info and 'FocalLength' in exif_info:
-        focal_length = exif_info['FocalLength']
-        logger.info(f"Focal Length: {focal_length} mm")
-        return focal_length
-    else:
-        return default
-
-def _get_photo_pixel_factor(exif_info):
-     if not exif_info:
-          return 25.4/640
-     resolution_unit = exif_info["ResolutionUnit"]
-     pixel_factor = exif_info["XResolution"]
-     if resolution_unit == Unit.NO_UNIT:
-        logger.warning("resolution unit is not specified")
-     elif resolution_unit == Unit.INCH:
-        pixel_factor = 25.4 / pixel_factor
-     elif resolution_unit == Unit.CM:
-         pixel_factor = 10 / pixel_factor
-     return pixel_factor
-
 def getPos(frame):
      # returns dict{ 
      #              buckets: list[ 
@@ -110,12 +72,11 @@ def getPos(frame):
      real_life_bucket_size = 6 * inch_to_mm
      real_life_stone_size = 2 * inch_to_mm
      
-     exif_info = _get_exif_data(frame=frame)
-     pixel_factor = _get_photo_pixel_factor(exif_info=exif_info)
-     focal_length = _get_focal_length(exif_info=exif_info)
      frame_height = frame.shape[0]
      frame_width = frame.shape[1]
-
+     pixel_factor = 25.4/frame_height               # get mm per pixel
+     focal_length = 3.6                             # focal length of pi camera is 3.6 mm
+   
      approx_view_angle = 60
      view_angle_per_ppx = approx_view_angle/frame_width
 
@@ -143,9 +104,9 @@ def getPos(frame):
              center_x , center_y , radius = stone
              if radius < 50:
                  continue
-             cv2.circle(frame, (int(center_x), int(center_y)), int(radius), (0, 0, 255), 2)
-             cv2.imshow("detected stones", frame)
-             cv2.waitKey(1)
+            #  cv2.circle(frame, (int(center_x), int(center_y)), int(radius), (0, 0, 255), 2)
+            #  cv2.imshow("detected stones", frame)
+            #  cv2.waitKey(1)
              true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
 
              if frame_height - center_y - radius != 0 and true_y_depth <= 400:   
