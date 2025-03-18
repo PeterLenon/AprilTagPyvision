@@ -22,7 +22,7 @@ def _detect_bucket(frame):
      blurred = cv2.GaussianBlur(gray, (5, 5), 0)
      edges = cv2.Canny(blurred, 50, 150)
      contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-     MIN_SIZE = 300
+     MIN_SIZE = 150
      potential_buckets = dict()
      for contour in contours:
          x, y, w, h = cv2.boundingRect(contour)
