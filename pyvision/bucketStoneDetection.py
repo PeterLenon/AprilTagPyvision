@@ -96,6 +96,9 @@ def getPos(frame):
                    bucket_x_center = x + (w/2)
                    bucket_center_from_camera_view = bucket_x_center - (frame_width/2)
                    angle = (bucket_center_from_camera_view * view_angle_per_ppx) + 60
+                   cv2.rectangle(frame, (x, y), (x+w, y), (0, 255, 0), 2)
+                   cv2.imshow("detected bucket", frame)
+                   cv2.waitKey(1)
                    objects[f"buckets"].append((angle, true_y_depth))
 
      if stones:
