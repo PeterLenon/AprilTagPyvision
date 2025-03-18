@@ -21,11 +21,11 @@ def _detect_bucket(frame):
      blurred = cv2.GaussianBlur(gray, (5, 5), 0)
      edges = cv2.Canny(blurred, 50, 150)
      contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-     MIN_SIZE = 50
+     MIN_SIZE = 100
      potential_buckets = dict()
      for contour in contours:
          x, y, w, h = cv2.boundingRect(contour)
-         if w < MIN_SIZE or h < MIN_SIZE:
+         if w < MIN_SIZE or h < MIN_SIZE or abs(w -h ) < 30:
              continue
          epsilon = 0.02 * cv2.arcLength(contour, True)
          approx = cv2.approxPolyDP(contour, epsilon, True)
@@ -122,12 +122,11 @@ def getPos(frame):
           objects['buckets'] = []
           for bucket in buckets.values():
                x , y, w, h = bucket
-               cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                depth_x = (focal_length * real_life_bucket_size) / (w * pixel_factor) 
                depth_y = (focal_length * real_life_bucket_size) / (h * pixel_factor)
                true_y_depth = (depth_x + depth_y)/2
                
-               if frame_height - (y+h) >0 and true_y_depth <= 1000 :
+               if frame_height - (y+h) > 0 and true_y_depth <= 1000 :
                 img_to_real_factor = true_y_depth / (frame_height - (y+h))
 
                 bucket_x_center = x + (w/2)
@@ -138,7 +137,6 @@ def getPos(frame):
          objects['stones'] = []
          for stone in stones.values():
              center_x , center_y , radius = stone
-             cv2.circle(frame, center=(center_x, center_y), radius=radius, color=(0, 0, 255) , thickness=2)
              true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
 
              if frame_height - center_y - radius != 0 and true_y_depth <= 400:   

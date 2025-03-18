@@ -1,6 +1,5 @@
 import cv2
 from loguru import logger
-import multiprocessing
 import numpy as np
 from apriltag import apriltag
 from picamera2 import Picamera2
