@@ -26,7 +26,7 @@ def _detect_bucket(frame):
      potential_buckets = dict()
      for contour in contours:
          x, y, w, h = cv2.boundingRect(contour)
-         if w < MIN_SIZE or h < MIN_SIZE or abs(w -h ) < 30:
+         if w < MIN_SIZE or h < MIN_SIZE or abs(w - h ) < 20:
              continue
          epsilon = 0.02 * cv2.arcLength(contour, True)
          approx = cv2.approxPolyDP(contour, epsilon, True)
