@@ -21,7 +21,7 @@ def video_processing(frame_queue):
 			if "buckets" in buckets_and_stones.keys():
 				for bucket in buckets_and_stones["buckets"]:
 					x, y = bucket
-					logger.info(f"Bucket x_depth --> {x} mm, Bucket y_depth --> {y} mm")
+					logger.info(f"Bucket x_angle --> {x} degrees, Bucket y_depth --> {y} mm")
 					logged_bucket_false = False
 			else:
 				if not logged_bucket_false:
@@ -32,7 +32,7 @@ def video_processing(frame_queue):
 			if "stones" in buckets_and_stones.keys():
 				for stone in buckets_and_stones["stones"]:
 					x, y = stone
-					logger.info(f"Stone x_depth --> {x} mm, Stone y_depth --> {y} mm")
+					logger.info(f"Stone x_angle --> {x} degress, Stone y_depth --> {y} mm")
 					logged_stones_false = False
 			else:
 				if not logged_stones_false:
