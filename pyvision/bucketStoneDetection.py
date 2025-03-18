@@ -109,12 +109,15 @@ def getPos(frame):
      inch_to_mm = 25.4
      real_life_bucket_size = 6 * inch_to_mm
      real_life_stone_size = 2 * inch_to_mm
-
+     
      exif_info = _get_exif_data(frame=frame)
      pixel_factor = _get_photo_pixel_factor(exif_info=exif_info)
      focal_length = _get_focal_length(exif_info=exif_info)
      frame_height = frame.shape[0]
      frame_width = frame.shape[1]
+
+     approx_view_angle = 60
+     view_angle_per_ppx = approx_view_angle/frame_width
 
      buckets = _detect_bucket(frame=frame)
      stones = _detect_stones(frame=frame)
@@ -129,12 +132,11 @@ def getPos(frame):
                true_y_depth = (depth_x + depth_y)/2
                
                if frame_height - (y+h) > 0 and true_y_depth <= 1000 :
-                img_to_real_factor = true_y_depth / (frame_height - (y+h))
+                   bucket_x_center = x + (w/2)
+                   bucket_center_from_camera_view = bucket_x_center - (frame_width/2)
+                   angle = (bucket_center_from_camera_view * view_angle_per_ppx) + 60
+                   objects[f"buckets"].append((angle, true_y_depth))
 
-                bucket_x_center = x + (w/2)
-                bucket_center_from_camera_view = bucket_x_center - (frame_width/2)
-                true_x_depth = bucket_center_from_camera_view * img_to_real_factor
-                objects[f"buckets"].append((true_x_depth, true_y_depth))   
      if stones:
          objects['stones'] = []
          for stone in stones.values():
@@ -147,9 +149,8 @@ def getPos(frame):
              true_y_depth = (focal_length * real_life_stone_size) / (radius * pixel_factor)
 
              if frame_height - center_y - radius != 0 and true_y_depth <= 400:   
-                img_to_real_factor = true_y_depth / (frame_height - center_y - radius)
                 stone_depth_from_center = center_x - (frame_width/2)
-                true_x_depth = stone_depth_from_center * img_to_real_factor
-                objects[f"stones"].append((true_x_depth, true_y_depth))
+                angle = (stone_depth_from_center * view_angle_per_ppx) + 60
+                objects[f"stones"].append((angle, true_y_depth))
 
      return objects
