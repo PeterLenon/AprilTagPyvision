@@ -139,6 +139,8 @@ def getPos(frame):
          objects['stones'] = []
          for stone in stones.values():
              center_x , center_y , radius = stone
+             if radius < 50:
+                 continue
              cv2.circle(frame, (int(center_x), int(center_y)), int(radius), (0, 0, 255), 2)
              cv2.imshow("detected stones", frame)
              cv2.waitKey(1)
