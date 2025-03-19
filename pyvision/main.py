@@ -15,6 +15,6 @@ args = parser.parse_args()
 sinkfile = args.sinkfile
 
 if __name__ == "__main__":
-	frame_queue = Queue(maxsize=600)
+	frame_queue = Queue(maxsize=50)
 	frame_queue = video_streaming(frame_queue=frame_queue)
 	video_processing(frame_queue=frame_queue, sinkfile=sinkfile)
