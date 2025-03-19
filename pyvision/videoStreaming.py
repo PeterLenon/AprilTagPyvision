@@ -1,10 +1,8 @@
 import cv2
 from loguru import logger
-import multiprocessing
 import numpy as np
 from apriltag import apriltag
 from picamera2 import Picamera2
-import subprocess
 
 def video_streaming(frame_queue):
 	camera = Picamera2()
@@ -14,13 +12,16 @@ def video_streaming(frame_queue):
 	camera.start()
 	
 	while True:
+		if frame_queue.full():
+			break
 		frame = camera.capture_array()
-		if not frame_queue.full():
-			frame_queue.put(frame)
+		frame_queue.put(frame)
 		
 		cv2.imshow("Picamera Video stream", frame)
 		if cv2.waitKey(1) & 0xFF ==ord('q'):
 			break
-	
+
 	camera.stop()
 	cv2.destroyAllWindows()
+	return frame_queue
+	

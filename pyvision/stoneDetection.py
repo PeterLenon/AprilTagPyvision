@@ -12,36 +12,6 @@ class Unit(Enum):
     CM = 3
     MM = 4
 
-def _detect_bucket(frame):
-    # returns dict of buckets as tuples
-    # returns dict{
-    #              bucket1: tuple(x_coordinate, y_coordinate, width, height),
-    #              ...
-    #              } 
-    hsv = cv2.cvtColor(frame, cv2.COLOR_RGB2HSV)
-    lower_white = np.array([0, 0, 200]) 
-    upper_white = np.array([179, 50, 255])
-    
-    mask = cv2.inRange(hsv, lower_white, upper_white)
-    
-    blurred = cv2.GaussianBlur(mask, (5, 5), 0)
-    edges = cv2.Canny(blurred, 50, 150)
-    
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    MIN_SIZE = 150
-    potential_buckets = dict()
-    
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
-        if w < MIN_SIZE or h < MIN_SIZE or abs(w - h) < 10:
-            continue
-        epsilon = 0.02 * cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, epsilon, True)
-        if len(approx) >= 4 and len(approx) <= 6:
-            potential_buckets[f'bucket{len(potential_buckets.keys())}'] = (x, y, w, h)
-    
-    return potential_buckets
-
 def _detect_stones(frame):
      # returns dict of stones as tuples
      # returns dict{ 
@@ -88,27 +58,9 @@ def getPos(frame):
      approx_view_angle = 60
      view_angle_per_ppx = approx_view_angle/frame_width
 
-     buckets = _detect_bucket(frame=frame)
      stones = _detect_stones(frame=frame)
      objects = dict()
      
-     if buckets:
-          objects['buckets'] = []
-          for bucket in buckets.values():
-               x , y, w, h = bucket
-               depth_x = (focal_length * real_life_bucket_size) / (w * pixel_factor) 
-               depth_y = (focal_length * real_life_bucket_size) / (h * pixel_factor)
-               true_y_depth = (depth_x + depth_y)/2
-               
-               if frame_height - (y+h) > 0 and true_y_depth <= 1000 :
-                   bucket_x_center = x + (w/2)
-                   bucket_center_from_camera_view = bucket_x_center - (frame_width/2)
-                   angle = (bucket_center_from_camera_view * view_angle_per_ppx) + 60
-                   cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                   cv2.imshow("detected bucket", frame)
-                   cv2.waitKey(1)
-                   objects[f"buckets"].append((angle, true_y_depth))
-
      if stones:
          objects['stones'] = []
          for stone in stones.values():
