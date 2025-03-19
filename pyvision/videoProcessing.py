@@ -4,7 +4,6 @@ from apriltag import apriltag
 from picamera2 import Picamera2
 from stoneDetection import getPos
 from tagDetection import tag_detection
-import json
 
 def video_processing(frame_queue, sinkfile):
 	logged_stones_false = False
@@ -19,7 +18,7 @@ def video_processing(frame_queue, sinkfile):
 			_writeToFile(sinkfile, repr(stones))
 			for stone in stones["stones"]:
 				x, y = stone
-				logger.info(f"Stone x_angle --> {x} degress, Stone y_depth --> {y} mm")
+				logger.info(f"Stone x_angle --> {x} degrees, Stone y_depth --> {y} mm")
 				logged_stones_false = False
 			
 		else:
