@@ -13,8 +13,8 @@ def video_processing(frame_queue):
 		payloads = tag_detection(frame=frame)
 		for info in payloads:
 			logger.info(info)
-		stones = getPos(frame=frame)
 
+		stones = getPos(frame=frame)
 		if "stones" in stones.keys():
 			for stone in stones["stones"]:
 				x, y = stone
