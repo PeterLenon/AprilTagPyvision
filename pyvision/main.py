@@ -8,8 +8,8 @@ from queue import Queue
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--sinkfile', required=True, help='Set filepath of the sinkfile jsonfile with the stone locations')
-parser.add_argument('--frames', required=False, help="set the amount of frames the camera takes for processing. The lower the number the faster the process completes")
+parser.add_argument('--sinkfile', required=True, help='Set filepath of the sinkfile jsonfile with the stone locations', type=str)
+parser.add_argument('--frames', required=False, help="set the amount of frames the camera takes for processing. The lower the number the faster the process completes", type=int)
 args = parser.parse_args()
 sinkfile = args.sinkfile
 frames = args.frames
