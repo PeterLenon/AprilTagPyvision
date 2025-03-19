@@ -27,8 +27,10 @@ def video_processing(frame_queue, sinkfile):
 				stones_and_apriltags["stones"].add(stone)
 		else:
 			logger.info("No stones detected!")
-			
+
 	if stones_and_apriltags.keys():
+		stones_and_apriltags["apriltags"] = list(stones_and_apriltags['apriltags'])
+		stones_and_apriltags["stones"] = list(stones_and_apriltags["stones"])
 		_writeToFile(filepath=sinkfile, content=repr(stones_and_apriltags))
 
 def _writeToFile(filepath="", content="{'stones' : [], 'apriltags': []}"):
