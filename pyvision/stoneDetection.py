@@ -72,6 +72,6 @@ def getPos(frame):
              if frame_height - center_y - radius != 0 and true_y_depth <= 400:   
                 stone_depth_from_center = center_x - (frame_width/2)
                 angle = (stone_depth_from_center * view_angle_per_ppx) + 60
-                objects[f"stones"].append((angle, true_y_depth))
+                objects[f"stones"].append(tuple((angle, true_y_depth)))
 
      return objects
