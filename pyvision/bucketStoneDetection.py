@@ -49,8 +49,8 @@ def _detect_stones(frame):
      #              ...
      #              } 
      hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-     lower_purple = np.array([48, 25, 52])
-     upper_purple = np.array([180, 155, 250])
+     lower_purple = np.array([120, 50, 50])
+     upper_purple = np.array([150, 255, 255])
      mask = cv2.inRange(hsv, lower_purple, upper_purple)
      contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
      potential_stones = dict()
