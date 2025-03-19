@@ -16,7 +16,7 @@ def video_processing(frame_queue, sinkfile):
 
 		stones = getPos(frame=frame)
 		if "stones" in stones.keys():
-			_writeToFile(sinkfile, json.dumps(stones))
+			_writeToFile(sinkfile, repr(stones))
 			for stone in stones["stones"]:
 				x, y = stone
 				logger.info(f"Stone x_angle --> {x} degress, Stone y_depth --> {y} mm")
