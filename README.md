@@ -1,3 +1,10 @@
+**SouthEastCon**
+===============
+1. Just clone this whole repository on your raspberry pi
+2. Go to your master sript and where you want the camera to be activated just add this line `subprocess.run['python3', '{path to this repository}/AprilTagPyvision/pyvision/main.py', '--sinkfile', '{insert filepath of the .txt file where the location of the stones will be logged for use by the master script}']`
+3. Then read the sinkfile using `with open` or any other python method you want and load up the contents as json because the content is a json formatted string `{'stones' : [tuple(angle1, depth1), tuple(angle2, depth2], ...]}`
+
+
 AprilTag 3
 ==========
 AprilTag is a visual fiducial system popular in robotics research. This repository contains the most recent version of AprilTag, AprilTag 3, which includes a faster (>2x) detector, improved detection rate on small tags, flexible tag layouts, and pose estimation. AprilTag consists of a small C library with minimal dependencies.
