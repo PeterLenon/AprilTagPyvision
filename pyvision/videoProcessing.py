@@ -17,6 +17,8 @@ def video_processing(frame_queue, sinkfile):
 			for info in payloads:
 				logger.info(info)
 				stones_and_apriltags["apriltags"].add(info)
+		else:
+			logger.info("No apriltags detected!")
 
 		stones = getPos(frame=frame)
 		if "stones" in stones.keys():
