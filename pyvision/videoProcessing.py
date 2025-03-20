@@ -13,14 +13,14 @@ def video_processing(frame_queue, sinkfile):
 		frame = frame_queue.get()
 		payloads = tag_detection(frame=frame)
 		if payloads:
-			stones_and_apriltags["stones"] = set()
+			stones_and_apriltags["apriltags"] = set()
 			for info in payloads:
 				logger.info(info)
 				stones_and_apriltags["apriltags"].add(info)
 
 		stones = getPos(frame=frame)
 		if "stones" in stones.keys():
-			stones_and_apriltags["apriltags"] = set()
+			stones_and_apriltags["stones"] = set()
 			for stone in stones["stones"]:
 				x, y = stone
 				logger.info(f"Stone x_angle --> {x} degrees, Stone y_depth --> {y} mm")
